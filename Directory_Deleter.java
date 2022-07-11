@@ -1,13 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Directory_Deleter {
-	public static void main(String[] args){
+	public static void main(String[] args){//7/10/22 currently does not work with C:\Users\K\eclipse-workspace,  think it has something to do with parent dir.
 				Scanner in=new Scanner(System.in);
 				boolean b1=true; //All booleans are for use with while loops.
 				boolean b2=true;
 				boolean b3=true;
+				boolean b4=true;
 				
 				//Basic input verification.
 				try {
@@ -21,8 +23,12 @@ public class Directory_Deleter {
 					}
 				}
 				
+				System.out.println("-----------------------------------------------------------------------------------");
 				System.out.println("Please enter keyword that is shared among all files that are selected for deletion.");
-				System.out.println("|WARNING|\nTHE CONTENT OF ANY SUBFOLDER,THE SUBFOLDER ITSELF AND ANY FILES IN THE SAME FOLDER AS THE SELECTED ONE THAT CONTAIN THE KEYWORD IN THEIR TITLE WILL BE DELTED.");
+				System.out.println("-----------------------------------------------------------------------------------");
+				System.out.println("\t\t\t\t|WARNING|");
+				System.out.println("THE CONTENT OF ANY SUBFOLDER,THE SUBFOLDER ITSELF AND ANY FILES IN THE SAME FOLDER \n\t\t\tTHAT MATCH THIS KEY WILL BE DELTED.");
+				System.out.println("-----------------------------------------------------------------------------------");
 				String x=in.nextLine();
 				
 				
@@ -39,25 +45,44 @@ public class Directory_Deleter {
 				if(!dir.exists()) throw new FileNotFoundException("Path entered does not exist!");
 				
 				String[] children=dir.list();
-				int i=0;
+				ArrayList indexArr= new ArrayList();			
 				while(b3) {
-					for(i=0;i<children.length;i++){
+					for(int i=0;i<children.length;i++){ 
 		                if(children[i].contains(x)) {
-		                	System.out.println("Found objects with names containing keyword.");
-		                	System.out.println("--------------------------------------------");
+		                	System.out.println("Found file named:"+children[i]);
+		                	indexArr.add(i);
 		                	b3=false;
-		                	break;
 		                }
 				}
 				if(!b3) {
-					continue;
+					boolean b5=true;
+					String yes="Y";
+					String no="N";
+					while(b5) {
+					System.out.println("Delete these Files?");
+					System.out.println("Y/N");
+					String z=in.nextLine();
+						if(z.equalsIgnoreCase(no)||(z.equalsIgnoreCase(yes))) {
+							b4=true;
+							b5=false;
+						}else {
+							System.out.println("Please enter Y/N.");
+						}
+					}
 				}else {
 	                	System.out.println("No file found containg keyword.");
 	                	System.out.println("Enter new keyword.");
 	                	x=in.nextLine();
 	                }
 			 }
-			delFile(new File(dir,children[i]));
+			if(b4) {	
+				for(int i=0;i<indexArr.size();i++) {
+					delFile(new File(dir,children[(int)indexArr.get(i)]));
+				} 
+			}else {
+				System.out.println("Files have not been deleted, exiting program.");
+			}
+			
 			System.out.println("--------------------------------------------");
 		}catch(FileNotFoundException ex) {
 			System.out.println(ex);
